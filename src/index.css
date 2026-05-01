@@ -1,0 +1,278 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════
+   QUANTIA Design System — index.css
+   Tailwind v4 · Light & Dark Mode
+   ══════════════════════════════════════════════════════ */
+
+/* Dark mode via .dark class on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── 1. STATIC TOKENS ──────────────────────────────── */
+@theme {
+  --font-display: "Nunito", sans-serif;
+  --font-sans:    "Nunito Sans", sans-serif;
+  --font-mono:    ui-monospace, "JetBrains Mono", monospace;
+
+  --text-xs:   0.6875rem;
+  --text-sm:   0.8125rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.375rem;
+  --text-xl:   1.75rem;
+  --text-2xl:  2.25rem;
+  --text-3xl:  3rem;
+  --text-4xl:  4rem;
+
+  --font-weight-light:    300;
+  --font-weight-normal:   400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+  --font-weight-black:    900;
+
+  --spacing: 0.25rem;
+
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-full: 9999px;
+
+  --duration-fast:  150ms;
+  --duration-base:  220ms;
+  --duration-theme: 320ms;
+  --ease-standard:  cubic-bezier(0.4, 0, 0.2, 1);
+
+  --sidebar-width:  256px;
+  --topbar-height:  64px;
+}
+
+/* ─── 2. RAW PALETTE ────────────────────────────────── */
+:root {
+  --q-purple-deeper: #251D9A;
+  --q-purple-dark:   #3B30C0;
+  --q-purple:        #5B4FF0;
+  --q-purple-mid:    #9B91F5;
+  --q-purple-light:  #EAE8FD;
+
+  --q-lime-dark:  #9AB82A;
+  --q-lime:       #C2E53A;
+  --q-lime-light: #D9EE79;
+  --q-lime-pale:  #EEF6CC;
+
+  --q-white:       #FFFFFF;
+  --q-gray-soft:   #F4F4F2;
+  --q-gray-light:  #C8C8C8;
+  --q-gray:        #888888;
+  --q-gray-dark:   #444444;
+  --q-black:       #0D0D0D;
+  --q-black-soft:  #1A1A1A;
+  --q-black-deep:  #0A0A12;
+  --q-surface-dark:#15151F;
+
+  --q-success: #22C55E;
+  --q-warning: #F59E0B;
+  --q-danger:  #EF4444;
+  --q-info:    #3B82F6;
+}
+
+/* ─── 3. SEMANTIC TOKENS — LIGHT ───────────────────── */
+:root {
+  --bg-page:     #F6F5FF;
+  --bg-surface:  var(--q-white);
+  --bg-subtle:   var(--q-gray-soft);
+  --bg-elevated: var(--q-white);
+  --bg-inverse:  var(--q-black);
+
+  --text-primary:    var(--q-black);
+  --text-secondary:  var(--q-gray-dark);
+  --text-muted:      var(--q-gray);
+  --text-faint:      var(--q-gray-light);
+  --text-on-brand:   var(--q-white);
+  --text-on-accent:  var(--q-black);
+  --text-on-inverse: var(--q-white);
+
+  --border-subtle:  rgba(91, 79, 240, 0.08);
+  --border-default: rgba(91, 79, 240, 0.20);
+  --border-strong:  var(--q-purple);
+
+  --brand-primary:        var(--q-purple);
+  --brand-primary-hover:  var(--q-purple-dark);
+  --brand-primary-active: var(--q-purple-deeper);
+  --brand-primary-soft:   var(--q-purple-light);
+
+  --brand-accent:        var(--q-lime);
+  --brand-accent-hover:  var(--q-lime-dark);
+  --brand-accent-soft:   var(--q-lime-pale);
+
+  --focus-ring: rgba(91, 79, 240, 0.25);
+
+  --shadow-sm:     0 1px 2px rgba(13,13,13,0.06);
+  --shadow-md:     0 4px 12px rgba(13,13,13,0.10);
+  --shadow-lg:     0 12px 32px rgba(13,13,13,0.14);
+  --shadow-brand:  0 8px 24px rgba(91,79,240,0.28);
+  --shadow-accent: 0 8px 24px rgba(194,229,58,0.32);
+
+  --success-fg: #15803D; --success-bg: #DCFCE7; --success-border: #86EFAC;
+  --warning-fg: #B45309; --warning-bg: #FEF3C7; --warning-border: #FCD34D;
+  --danger-fg:  #B91C1C; --danger-bg:  #FEE2E2; --danger-border:  #FCA5A5;
+  --info-fg:    #1D4ED8; --info-bg:    #DBEAFE; --info-border:    #93C5FD;
+}
+
+/* ─── 3b. SEMANTIC TOKENS — DARK ─── ⚡ LIME IS PRIMARY */
+.dark {
+  --bg-page:     var(--q-black-deep);
+  --bg-surface:  var(--q-surface-dark);
+  --bg-subtle:   #1A1A24;
+  --bg-elevated: #1F1F2C;
+  --bg-inverse:  var(--q-white);
+
+  --text-primary:    var(--q-gray-soft);
+  --text-secondary:  var(--q-gray-light);
+  --text-muted:      var(--q-gray);
+  --text-faint:      #555555;
+  --text-on-brand:   var(--q-black);
+  --text-on-accent:  var(--q-white);
+  --text-on-inverse: var(--q-black);
+
+  --border-subtle:  rgba(255,255,255,0.06);
+  --border-default: rgba(194,229,58,0.18);
+  --border-strong:  var(--q-lime);
+
+  --brand-primary:        var(--q-lime);
+  --brand-primary-hover:  var(--q-lime-light);
+  --brand-primary-active: var(--q-lime-dark);
+  --brand-primary-soft:   rgba(194,229,58,0.12);
+
+  --brand-accent:        var(--q-purple-mid);
+  --brand-accent-hover:  var(--q-purple);
+  --brand-accent-soft:   rgba(155,145,245,0.15);
+
+  --focus-ring: rgba(194,229,58,0.35);
+
+  --shadow-sm:     0 1px 2px rgba(0,0,0,0.40);
+  --shadow-md:     0 4px 12px rgba(0,0,0,0.50);
+  --shadow-lg:     0 12px 32px rgba(0,0,0,0.60);
+  --shadow-brand:  0 8px 24px rgba(194,229,58,0.20);
+  --shadow-accent: 0 8px 24px rgba(155,145,245,0.25);
+
+  --success-fg: #86EFAC; --success-bg: rgba(34,197,94,0.12);  --success-border: rgba(34,197,94,0.30);
+  --warning-fg: #FCD34D; --warning-bg: rgba(245,158,11,0.12); --warning-border: rgba(245,158,11,0.30);
+  --danger-fg:  #FCA5A5; --danger-bg:  rgba(239,68,68,0.12);  --danger-border:  rgba(239,68,68,0.30);
+  --info-fg:    #93C5FD; --info-bg:    rgba(59,130,246,0.12); --info-border:    rgba(59,130,246,0.30);
+}
+
+/* ─── 4. TAILWIND BRIDGE ────────────────────────────── */
+@theme inline {
+  --color-surface:       var(--bg-surface);
+  --color-page:          var(--bg-page);
+  --color-subtle:        var(--bg-subtle);
+  --color-elevated:      var(--bg-elevated);
+  --color-inverse-bg:    var(--bg-inverse);
+
+  --color-primary:       var(--text-primary);
+  --color-secondary:     var(--text-secondary);
+  --color-muted:         var(--text-muted);
+  --color-faint:         var(--text-faint);
+  --color-on-brand:      var(--text-on-brand);
+  --color-on-accent:     var(--text-on-accent);
+  --color-on-inverse:    var(--text-on-inverse);
+
+  --color-stroke:        var(--border-default);
+  --color-stroke-subtle: var(--border-subtle);
+  --color-stroke-strong: var(--border-strong);
+
+  --color-brand:         var(--brand-primary);
+  --color-brand-hover:   var(--brand-primary-hover);
+  --color-brand-soft:    var(--brand-primary-soft);
+  --color-accent:        var(--brand-accent);
+  --color-accent-hover:  var(--brand-accent-hover);
+  --color-accent-soft:   var(--brand-accent-soft);
+
+  --color-success-fg:    var(--success-fg);
+  --color-success-bg:    var(--success-bg);
+  --color-warning-fg:    var(--warning-fg);
+  --color-warning-bg:    var(--warning-bg);
+  --color-danger-fg:     var(--danger-fg);
+  --color-danger-bg:     var(--danger-bg);
+  --color-info-fg:       var(--info-fg);
+  --color-info-bg:       var(--info-bg);
+
+  --color-q-purple:      #5B4FF0;
+  --color-q-purple-mid:  #9B91F5;
+  --color-q-lime:        #C2E53A;
+  --color-q-black:       #0D0D0D;
+  --color-q-white:       #FFFFFF;
+}
+
+/* ─── 5. BASE STYLES ────────────────────────────────── */
+@layer base {
+  html {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: background-color var(--duration-theme) var(--ease-standard),
+                color var(--duration-theme) var(--ease-standard);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1.15;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--focus-ring);
+    border-radius: 4px;
+  }
+  * {
+    transition-property: background-color, border-color, color;
+    transition-duration: var(--duration-theme);
+    transition-timing-function: var(--ease-standard);
+  }
+  button { cursor: pointer; }
+}
+
+/* ─── 6. AG GRID — QUANTIA THEME ───────────────────────── */
+.ag-theme-quartz {
+  --ag-background-color:                 var(--bg-surface);
+  --ag-foreground-color:                 var(--text-primary);
+  --ag-border-color:                     var(--border-subtle);
+  --ag-secondary-border-color:           var(--border-subtle);
+  --ag-row-border-color:                 var(--border-subtle);
+  --ag-header-background-color:          var(--bg-subtle);
+  --ag-header-foreground-color:          var(--text-secondary);
+  --ag-header-column-separator-color:    var(--border-subtle);
+  --ag-odd-row-background-color:         transparent;
+  --ag-row-hover-color:                  var(--brand-primary-soft);
+  --ag-selected-row-background-color:    var(--brand-primary-soft);
+  --ag-accent-color:                     var(--brand-primary);
+  --ag-input-focus-border-color:         var(--brand-primary);
+  --ag-input-focus-box-shadow:           0 0 0 3px var(--focus-ring);
+  --ag-checkbox-checked-color:           var(--brand-primary);
+  --ag-range-selection-border-color:     var(--brand-primary);
+  --ag-range-selection-background-color: var(--brand-primary-soft);
+  --ag-popup-shadow:                     var(--shadow-lg);
+  --ag-font-family:                      'Nunito Sans', sans-serif;
+  --ag-font-size:                        13px;
+  --ag-border-radius:                    8px;
+  --ag-wrapper-border-radius:            16px;
+  --ag-row-height:                       56px;
+  --ag-header-height:                    44px;
+  --ag-cell-horizontal-padding:          14px;
+  --ag-grid-size:                        6px;
+  --ag-icon-size:                        14px;
+  --ag-list-item-height:                 30px;
+  --ag-panel-background-color:           var(--bg-elevated);
+  --ag-tool-panel-background-color:      var(--bg-surface);
+  --ag-menu-background-color:            var(--bg-elevated);
+}
