@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/client';
 import { getSession } from '@/store/auth';
-import { ArrowLeft, RefreshCw, X } from 'lucide-react';
+import { ArrowLeft, RefreshCw } from 'lucide-react';
 
 interface ParteX {
   desde: string;
@@ -38,7 +38,6 @@ export default function CierreCajaPage() {
 
   const [resumen, setResumen] = useState<ParteX | null>(null);
   const [loading, setLoading] = useState(true);
-  const [modal, setModal] = useState(false);
   const [reales, setReales] = useState<Reales>({ efectivo: '', tarjeta: '', transferencia: '' });
   const [cerrando, setCerrando] = useState(false);
   const [resultado, setResultado] = useState<CierreResult | null>(null);
@@ -48,6 +47,11 @@ export default function CierreCajaPage() {
     try {
       const r = await api.get<ParteX>(`/sesiones-caja/parte-x/${taquilla}`);
       setResumen(r);
+      setReales({
+        efectivo: r.totalEfectivo.toFixed(2),
+        tarjeta: r.totalTarjeta.toFixed(2),
+        transferencia: r.totalTransferencia.toFixed(2),
+      });
     } finally {
       setLoading(false);
     }
@@ -55,17 +59,8 @@ export default function CierreCajaPage() {
 
   useEffect(() => { cargar(); }, []);
 
-  function abrirModal() {
-    // Pre-rellenar con los valores teóricos para facilitar
-    setReales({
-      efectivo: resumen?.totalEfectivo.toFixed(2) ?? '',
-      tarjeta: resumen?.totalTarjeta.toFixed(2) ?? '',
-      transferencia: resumen?.totalTransferencia.toFixed(2) ?? '',
-    });
-    setModal(true);
-  }
-
   async function cerrar() {
+    if (!window.confirm('¿Confirmar cierre de caja? Esta acción no se puede deshacer.')) return;
     setCerrando(true);
     try {
       const body: Record<string, number> = {};
@@ -75,7 +70,6 @@ export default function CierreCajaPage() {
 
       const res = await api.post<CierreResult>(`/sesiones-caja/cerrar/${taquilla}`, body);
       setResultado(res);
-      setModal(false);
     } catch (e: any) {
       alert(e.message);
     } finally {
@@ -160,13 +154,36 @@ export default function CierreCajaPage() {
               Desde {new Date(resumen.desde).toLocaleString('es-ES')} · {resumen.totalVentas} ventas
             </p>
 
-            {/* KPIs */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* KPIs teóricos */}
+            <div className="grid grid-cols-3 gap-3">
               <KPI label="Total general" value={`${resumen.totalGeneral.toFixed(2)} €`} accent />
               <KPI label="Ventas" value={String(resumen.totalVentas)} />
-              <KPI label="Efectivo" value={`${resumen.totalEfectivo.toFixed(2)} €`} />
-              <KPI label="Tarjeta" value={`${resumen.totalTarjeta.toFixed(2)} €`} />
-              <KPI label="Transferencia" value={`${resumen.totalTransferencia.toFixed(2)} €`} />
+              <KPI label="Tickets" value={String(Object.values(resumen.ticketResumen).reduce((a, b) => a + b, 0))} />
+            </div>
+
+            {/* Arqueo inline — siempre visible */}
+            <div className="bg-gray-900 rounded-2xl p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Arqueo — importes reales</p>
+              <div className="flex flex-col gap-3">
+                <FilaArqueo
+                  label="💵 Efectivo"
+                  teorico={resumen.totalEfectivo}
+                  value={reales.efectivo}
+                  onChange={v => setReales(r => ({ ...r, efectivo: v }))}
+                />
+                <FilaArqueo
+                  label="💳 Tarjeta / Datáfono"
+                  teorico={resumen.totalTarjeta}
+                  value={reales.tarjeta}
+                  onChange={v => setReales(r => ({ ...r, tarjeta: v }))}
+                />
+                <FilaArqueo
+                  label="📱 Transferencia"
+                  teorico={resumen.totalTransferencia}
+                  value={reales.transferencia}
+                  onChange={v => setReales(r => ({ ...r, transferencia: v }))}
+                />
+              </div>
             </div>
 
             {/* Tickets */}
@@ -202,54 +219,13 @@ export default function CierreCajaPage() {
               </div>
             )}
 
-            <button onClick={abrirModal}
-              className="py-4 rounded-xl bg-red-700 hover:bg-red-600 font-bold text-base transition-all mt-2">
-              Cerrar caja (Parte Z)
+            <button onClick={cerrar} disabled={cerrando}
+              className="py-4 rounded-xl bg-red-700 hover:bg-red-600 disabled:opacity-40 font-bold text-base transition-all">
+              {cerrando ? 'Cerrando…' : 'Cerrar caja (Parte Z)'}
             </button>
           </div>
         )}
       </div>
-
-      {/* ── Modal cierre con arqueo por método ── */}
-      {modal && resumen && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-md relative">
-            <button onClick={() => setModal(false)} className="absolute top-3 right-3 text-gray-500 hover:text-white">
-              <X size={20} />
-            </button>
-            <h2 className="text-lg font-bold mb-1">Arqueo y cierre</h2>
-            <p className="text-gray-500 text-sm mb-5">
-              Introduce los importes reales contados. Déjalos vacíos si no quieres registrar ese método.
-            </p>
-
-            <div className="flex flex-col gap-3 mb-5">
-              <FilaArqueo
-                label="Efectivo"
-                teorico={resumen.totalEfectivo}
-                value={reales.efectivo}
-                onChange={v => setReales(r => ({ ...r, efectivo: v }))}
-              />
-              <FilaArqueo
-                label="Tarjeta / Datáfono"
-                teorico={resumen.totalTarjeta}
-                value={reales.tarjeta}
-                onChange={v => setReales(r => ({ ...r, tarjeta: v }))}
-              />
-              <FilaArqueo
-                label="Transferencia"
-                teorico={resumen.totalTransferencia}
-                value={reales.transferencia}
-                onChange={v => setReales(r => ({ ...r, transferencia: v }))}
-              />
-            </div>
-
-            <button onClick={cerrar} disabled={cerrando}
-              className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 font-bold transition-all">
-              {cerrando ? 'Cerrando…' : 'Confirmar cierre'}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
