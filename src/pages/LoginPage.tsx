@@ -1,217 +1,151 @@
-import { Eye, EyeOff, Lock, Mail, Sparkles, Zap } from 'lucide-react';
-import { useState } from 'react';
-import { ThemeToggle } from '@/components/theme/ThemeToggle';
-import { Button } from '@/components/ui';
-import { cn } from '@/lib/cn';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { api } from '@/api/client';
+import { saveSession } from '@/store/auth';
+import { Delete } from 'lucide-react';
 
-interface LoginPageProps {
-  onLogin: () => void;
-}
+interface Usuario { id: number; nombre: string; rol: 'ADMIN' | 'TAQUILLA' }
 
-const FEATURES = [
-  { icon: '🏗️', label: 'Gestión BIM avanzada',        desc: 'Coordinación de proyectos en tiempo real' },
-  { icon: '🤖', label: 'Inteligencia Artificial',      desc: 'Predicción de costes y automatización' },
-  { icon: '📊', label: 'Analytics ejecutivo',          desc: 'KPIs y métricas en un solo panel' },
-  { icon: '🔗', label: 'Integración total',            desc: 'GitHub, Azure, Jira, Confluence y más' },
-];
+const TAQUILLAS = [1, 2, 3];
 
-export function LoginPage({ onLogin }: LoginPageProps) {
-  const [email]       = useState('admin@quantia.es');
-  const [password]    = useState('quantia2026');
-  const [showPwd, setShowPwd] = useState(false);
+export default function LoginPage() {
+  const navigate = useNavigate();
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [selected, setSelected] = useState<Usuario | null>(null);
+  const [pin, setPin] = useState('');
+  const [taquilla, setTaquilla] = useState(1);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => { setLoading(false); onLogin(); }, 900);
+  useEffect(() => {
+    api.get<Usuario[]>('/auth/usuarios').then(setUsuarios).catch(() => {});
+  }, []);
+
+  function selectUsuario(u: Usuario) {
+    setSelected(u);
+    setPin('');
+    setError('');
   }
 
+  function pressDigit(d: string) {
+    if (pin.length >= 6) return;
+    setPin(p => p + d);
+  }
+
+  async function pressEnter() {
+    if (!selected || pin.length < 4) return;
+    setLoading(true);
+    setError('');
+    try {
+      const res = await api.post<{ access_token: string; usuario: { id: number; nombre: string; rol: 'ADMIN' | 'TAQUILLA' } }>(
+        '/auth/login',
+        { usuarioId: selected.id, pin }
+      );
+      saveSession({ ...res.usuario, taquilla }, res.access_token);
+      navigate('/tpv');
+    } catch {
+      setError('PIN incorrecto');
+      setPin('');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const admins = usuarios.filter(u => u.rol === 'ADMIN');
+  const taquilleros = usuarios.filter(u => u.rol === 'TAQUILLA');
+
   return (
-    <div className="min-h-screen flex bg-[var(--bg-page)]">
+    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center gap-8 p-6 select-none">
+      <h1 className="text-3xl font-bold text-white tracking-wide">TPV Corpus</h1>
 
-      {/* ── LEFT — Brand panel (siempre oscuro) ── */}
-      <div className="hidden lg:flex lg:w-[52%] relative flex-col justify-between bg-[#0A0A12] overflow-hidden p-12">
-
-        {/* Decorative glows */}
-        <div className="pointer-events-none absolute -top-32 -right-24 size-[500px] rounded-full"
-             style={{ background: 'radial-gradient(circle, rgba(91,79,240,0.30) 0%, transparent 65%)' }} />
-        <div className="pointer-events-none absolute -bottom-24 left-[10%] size-[320px] rounded-full"
-             style={{ background: 'radial-gradient(circle, rgba(194,229,58,0.12) 0%, transparent 65%)' }} />
-        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full"
-             style={{ background: 'radial-gradient(circle, rgba(91,79,240,0.06) 0%, transparent 60%)' }} />
-
-        {/* Header logo */}
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 mb-2">
-            <div className="size-8 rounded-lg bg-[var(--q-purple)] flex items-center justify-center">
-              <Zap size={14} className="text-white" />
-            </div>
-            <span className="font-[family-name:var(--font-display)] text-xl font-black text-white tracking-[-0.01em]">
-              QUANT<span className="text-[var(--q-lime)]">IA</span>
-            </span>
-          </div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30">
-            Ingeniería y Consultoría
-          </p>
-        </div>
-
-        {/* Main content */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center py-16">
-          <div className="inline-flex items-center gap-1.5 mb-8 rounded-full border border-[var(--q-lime)]/25 bg-[var(--q-lime)]/8 px-3 py-1.5 w-fit">
-            <Sparkles size={11} className="text-[var(--q-lime)]" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.10em] text-[var(--q-lime)]">Plataforma IA · v2.0</span>
-          </div>
-
-          <h1 className="font-[family-name:var(--font-display)] text-[52px] font-black leading-[1.02] tracking-[-0.03em] text-white mb-6">
-            El futuro de la<br />
-            ingeniería,{' '}
-            <em className="not-italic text-[var(--q-lime)]">hoy.</em>
-          </h1>
-
-          <p className="text-white/50 text-lg font-light leading-relaxed mb-12 max-w-md">
-            Gestiona proyectos BIM, automatiza con IA y toma decisiones basadas en datos desde un único panel centralizado.
-          </p>
-
-          <ul className="space-y-4">
-            {FEATURES.map(f => (
-              <li key={f.label} className="flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center text-lg shrink-0">
-                  {f.icon}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white/90">{f.label}</p>
-                  <p className="text-xs text-white/40">{f.desc}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Footer */}
-        <div className="relative z-10 flex items-center justify-between">
-          <p className="text-[11px] text-white/20 font-mono">Brand Style Guide v2.0 · Abril 2026</p>
-          <div className="flex gap-1">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className={cn('size-1.5 rounded-full', i === 0 ? 'bg-[var(--q-lime)]' : 'bg-white/15')} />
+      {!selected ? (
+        <div className="w-full max-w-xl flex flex-col gap-6">
+          {/* Selector de taquilla */}
+          <div className="flex items-center justify-center gap-3">
+            <span className="text-gray-400 text-sm">Taquilla:</span>
+            {TAQUILLAS.map(n => (
+              <button key={n} onClick={() => setTaquilla(n)}
+                className={`w-12 h-12 rounded-xl text-lg font-bold transition-all ${
+                  taquilla === n ? 'bg-amber-500 text-gray-950' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}>
+                {n}
+              </button>
             ))}
           </div>
+
+          {admins.length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-2 text-center">Admin</p>
+              <div className="grid grid-cols-4 gap-3">
+                {admins.map(u => <UserCard key={u.id} usuario={u} onSelect={selectUsuario} />)}
+              </div>
+            </div>
+          )}
+
+          {taquilleros.length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-2 text-center">Taquilla</p>
+              <div className="grid grid-cols-3 gap-3">
+                {taquilleros.map(u => <UserCard key={u.id} usuario={u} onSelect={selectUsuario} />)}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col items-center gap-6">
+          <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-white text-sm">
+            ← Volver
+          </button>
 
-      {/* ── RIGHT — Login form ── */}
-      <div className="flex-1 flex flex-col">
-
-        {/* Top bar */}
-        <div className="flex items-center justify-between px-8 pt-7">
-          {/* Logo mobile */}
-          <div className="lg:hidden font-[family-name:var(--font-display)] text-xl font-black text-[var(--text-primary)] tracking-[-0.01em]">
-            QUANT<span className="text-[var(--brand-primary)]">IA</span>
+          <div className={`text-xl font-semibold ${selected.rol === 'ADMIN' ? 'text-amber-400' : 'text-blue-400'}`}>
+            {selected.nombre}
           </div>
-          <div className="hidden lg:block" />
-          <ThemeToggle />
-        </div>
 
-        {/* Form */}
-        <div className="flex-1 flex items-center justify-center px-8 py-12">
-          <div className="w-full max-w-[400px]">
+          <div className="flex gap-4">
+            {[0,1,2,3].map(i => (
+              <div key={i} className={`w-4 h-4 rounded-full transition-all ${i < pin.length ? 'bg-amber-400' : 'bg-gray-700'}`} />
+            ))}
+          </div>
 
-            {/* Heading */}
-            <div className="mb-10">
-              <h2 className="font-[family-name:var(--font-display)] text-[32px] font-black tracking-[-0.02em] text-[var(--text-primary)] leading-tight">
-                Bienvenido<br />
-                <span className="text-[var(--brand-primary)]">de vuelta.</span>
-              </h2>
-              <p className="mt-3 text-sm text-[var(--text-muted)]">
-                Introduce tus credenciales para acceder al panel.
-              </p>
-            </div>
+          {error && <p className="text-red-400 text-sm">{error}</p>}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-
-              {/* Email */}
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-[0.10em] text-[var(--text-secondary)]">
-                  Correo electrónico
-                </label>
-                <div className="relative">
-                  <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)]" />
-                  <input
-                    type="email"
-                    defaultValue={email}
-                    required
-                    className="w-full pl-10 pr-4 py-3 bg-[var(--bg-surface)] border-[1.5px] border-[var(--border-default)] rounded-xl text-sm text-[var(--text-primary)] outline-none focus:border-[var(--brand-primary)] focus:shadow-[0_0_0_3px_var(--focus-ring)] transition-all duration-[220ms] placeholder:text-[var(--text-faint)]"
-                    placeholder="tu@empresa.com"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-bold uppercase tracking-[0.10em] text-[var(--text-secondary)]">
-                    Contraseña
-                  </label>
-                  <button type="button" className="text-[11px] font-semibold text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] transition-colors">
-                    ¿Olvidaste la contraseña?
-                  </button>
-                </div>
-                <div className="relative">
-                  <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)]" />
-                  <input
-                    type={showPwd ? 'text' : 'password'}
-                    defaultValue={password}
-                    required
-                    className="w-full pl-10 pr-12 py-3 bg-[var(--bg-surface)] border-[1.5px] border-[var(--border-default)] rounded-xl text-sm text-[var(--text-primary)] outline-none focus:border-[var(--brand-primary)] focus:shadow-[0_0_0_3px_var(--focus-ring)] transition-all duration-[220ms] placeholder:text-[var(--text-faint)]"
-                    placeholder="••••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPwd(p => !p)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-faint)] hover:text-[var(--text-muted)] transition-colors"
-                    aria-label={showPwd ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Remember me */}
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="size-4 rounded border-[var(--border-default)] accent-[var(--brand-primary)] cursor-pointer"
-                />
-                <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
-                  Mantener sesión iniciada
-                </span>
-              </label>
-
-              {/* Submit */}
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                loading={loading}
-                className="w-full mt-2 justify-center"
-              >
-                {loading ? 'Verificando…' : 'Acceder al panel →'}
-              </Button>
-
-            </form>
-
-            {/* Divider hint */}
-            <div className="mt-8 pt-6 border-t border-[var(--border-subtle)]">
-              <p className="text-center text-[11px] text-[var(--text-faint)]">
-                Acceso restringido · Solo personal autorizado de QUANTIA
-              </p>
-            </div>
-
+          <div className="grid grid-cols-3 gap-3">
+            {['1','2','3','4','5','6','7','8','9'].map(d => (
+              <PinKey key={d} label={d} onClick={() => pressDigit(d)} />
+            ))}
+            <PinKey label={<Delete size={20} />} onClick={() => setPin(p => p.slice(0,-1))} variant="ghost" />
+            <PinKey label="0" onClick={() => pressDigit('0')} />
+            <PinKey label={loading ? '…' : '✓'} onClick={pressEnter} variant="confirm" disabled={pin.length < 4 || loading} />
           </div>
         </div>
-      </div>
-
+      )}
     </div>
+  );
+}
+
+function UserCard({ usuario, onSelect }: { usuario: Usuario; onSelect: (u: Usuario) => void }) {
+  const isAdmin = usuario.rol === 'ADMIN';
+  return (
+    <button onClick={() => onSelect(usuario)}
+      className={`py-5 px-3 rounded-2xl font-semibold text-lg transition-all active:scale-95 ${
+        isAdmin
+          ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
+          : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/30'
+      }`}>
+      {usuario.nombre}
+    </button>
+  );
+}
+
+function PinKey({ label, onClick, variant = 'default', disabled = false }: {
+  label: React.ReactNode; onClick: () => void;
+  variant?: 'default' | 'ghost' | 'confirm'; disabled?: boolean;
+}) {
+  const styles = { default: 'bg-gray-800 text-white hover:bg-gray-700', ghost: 'bg-transparent text-gray-400 hover:bg-gray-800', confirm: 'bg-amber-500 text-gray-950 hover:bg-amber-400' };
+  return (
+    <button onClick={onClick} disabled={disabled}
+      className={`w-20 h-20 rounded-2xl text-2xl font-bold flex items-center justify-center transition-all active:scale-95 disabled:opacity-30 ${styles[variant]}`}>
+      {label}
+    </button>
   );
 }
