@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/client';
 import { clearSession, getSession } from '@/store/auth';
@@ -102,6 +102,7 @@ export default function TpvPage() {
           <span className="text-gray-500 text-sm">· Taquilla {session?.taquilla} · {session?.nombre}</span>
         </div>
         <div className="flex items-center gap-1">
+          <RelojNavBar />
           {session?.rol === 'ADMIN' && <>
             <NavBtn icon={<LayoutDashboard size={15} />} label="Dashboard" onClick={() => navigate('/dashboard')} />
             <NavBtn icon={<Package size={15} />} label="Productos" onClick={() => navigate('/productos')} />
@@ -285,5 +286,46 @@ function NavBtn({ icon, label, onClick }: { icon: React.ReactNode; label: string
     <button onClick={onClick} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 text-xs transition-all">
       {icon}{label}
     </button>
+  );
+}
+
+function RelojNavBar() {
+  const [horaLocal, setHoraLocal] = useState('');
+  const [horaBack, setHoraBack] = useState('');
+  const timerLocal = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerBack = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function fmt(iso: string) {
+    return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  async function fetchBack() {
+    try {
+      const { ahora } = await api.get<{ ahora: string }>('/sistema/tiempo');
+      setHoraBack(fmt(ahora));
+    } catch { /* silencioso */ }
+  }
+
+  useEffect(() => {
+    timerLocal.current = setInterval(() => setHoraLocal(fmt(new Date().toISOString())), 1000);
+    fetchBack();
+    timerBack.current = setInterval(fetchBack, 10_000);
+    return () => {
+      clearInterval(timerLocal.current!);
+      clearInterval(timerBack.current!);
+    };
+  }, []);
+
+  return (
+    <div className="flex items-center gap-3 text-xs font-mono text-gray-400 border-l border-gray-800 pl-3 ml-1">
+      <span title="Hora local (navegador)">
+        <span className="text-gray-600">Local </span>
+        <span className="text-white">{horaLocal}</span>
+      </span>
+      <span title="Hora servidor (backend)">
+        <span className="text-gray-600">Srv </span>
+        <span className={horaBack ? 'text-amber-400' : 'text-gray-600'}>{horaBack || '—'}</span>
+      </span>
+    </div>
   );
 }
