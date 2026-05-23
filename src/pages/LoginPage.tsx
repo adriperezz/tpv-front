@@ -66,7 +66,7 @@ export default function LoginPage() {
             {TAQUILLAS.map(n => (
               <button key={n} onClick={() => setTaquilla(n)}
                 className={`w-12 h-12 rounded-xl text-lg font-bold transition-all ${
-                  taquilla === n ? 'bg-amber-500 text-gray-950' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  taquilla === n ? "bg-amber-500 text-white" : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                 }`}>
                 {n}
               </button>
@@ -141,7 +141,7 @@ function PinKey({ label, onClick, variant = 'default', disabled = false }: {
   label: React.ReactNode; onClick: () => void;
   variant?: 'default' | 'ghost' | 'confirm'; disabled?: boolean;
 }) {
-  const styles = { default: 'bg-gray-800 text-white hover:bg-gray-700', ghost: 'bg-transparent text-gray-400 hover:bg-gray-800', confirm: 'bg-amber-500 text-gray-950 hover:bg-amber-400' };
+  const styles = { default: 'bg-gray-800 text-white hover:bg-gray-700', ghost: 'bg-transparent text-gray-400 hover:bg-gray-800', confirm: 'bg-amber-500 text-white hover:bg-amber-400' };
   return (
     <button onClick={onClick} disabled={disabled}
       className={`w-20 h-20 rounded-2xl text-2xl font-bold flex items-center justify-center transition-all active:scale-95 disabled:opacity-30 ${styles[variant]}`}>

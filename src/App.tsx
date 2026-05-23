@@ -5,6 +5,7 @@ import TpvPage from '@/pages/TpvPage';
 import ConfigPage from '@/pages/ConfigPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ProductosPage from '@/pages/ProductosPage';
+import CierreCajaPage from '@/pages/CierreCajaPage';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   return getSession() ? <>{children}</> : <Navigate to="/login" replace />;
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/config" element={<RequireAuth><ConfigPage /></RequireAuth>} />
         <Route path="/dashboard" element={<RequireAdmin><DashboardPage /></RequireAdmin>} />
         <Route path="/productos" element={<RequireAdmin><ProductosPage /></RequireAdmin>} />
+        <Route path="/cierre" element={<RequireAuth><CierreCajaPage /></RequireAuth>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

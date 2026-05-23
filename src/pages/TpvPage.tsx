@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/client';
 import { clearSession, getSession } from '@/store/auth';
-import { Trash2, X, Settings, LayoutDashboard, LogOut, Package } from 'lucide-react';
+import { getTheme, toggleTheme } from '@/store/theme';
+import { Trash2, X, Settings, LayoutDashboard, LogOut, Package, ClipboardList, Sun, Moon } from 'lucide-react';
 
 interface TipoTicket { id: number; nombre: string; color: string }
 interface ProductoTicket { tipoTicketId: number; cantidad: number; tipoTicket: TipoTicket }
@@ -107,7 +108,9 @@ export default function TpvPage() {
             <NavBtn icon={<LayoutDashboard size={15} />} label="Dashboard" onClick={() => navigate('/dashboard')} />
             <NavBtn icon={<Package size={15} />} label="Productos" onClick={() => navigate('/productos')} />
           </>}
+          <NavBtn icon={<ClipboardList size={15} />} label="Cierre" onClick={() => navigate('/cierre')} />
           <NavBtn icon={<Settings size={15} />} label="Config" onClick={() => navigate('/config')} />
+          <ThemeToggleBtn />
           <NavBtn icon={<LogOut size={15} />} label="Salir" onClick={() => { clearSession(); navigate('/login'); }} />
         </div>
       </nav>
@@ -285,6 +288,19 @@ function NavBtn({ icon, label, onClick }: { icon: React.ReactNode; label: string
   return (
     <button onClick={onClick} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 text-xs transition-all">
       {icon}{label}
+    </button>
+  );
+}
+
+function ThemeToggleBtn() {
+  const [dark, setDark] = useState(getTheme() === 'dark');
+  return (
+    <button
+      onClick={() => { const t = toggleTheme(); setDark(t === 'dark'); }}
+      className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-all"
+      title={dark ? 'Modo claro' : 'Modo oscuro'}
+    >
+      {dark ? <Sun size={15} /> : <Moon size={15} />}
     </button>
   );
 }

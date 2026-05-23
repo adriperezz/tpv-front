@@ -1,28 +1,18 @@
 @import "tailwindcss";
 
 /* ══════════════════════════════════════════════════════
-   QUANTIA Design System — index.css
-   Tailwind v4 · Light & Dark Mode
+   Corpus Nazarí Design System
+   Feria del Corpus Granada 2026 — Patio Nazarí
+   Tailwind v4 · Rubik · Navy Blue & Cream
    ══════════════════════════════════════════════════════ */
 
-/* Dark mode via .dark class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ─── 1. STATIC TOKENS ──────────────────────────────── */
+/* ─── 1. STATIC TOKENS (build-time) ─────────────────── */
 @theme {
-  --font-display: "Nunito", sans-serif;
-  --font-sans:    "Nunito Sans", sans-serif;
+  --font-sans:    "Rubik", sans-serif;
+  --font-display: "Rubik", sans-serif;
   --font-mono:    ui-monospace, "JetBrains Mono", monospace;
-
-  --text-xs:   0.6875rem;
-  --text-sm:   0.8125rem;
-  --text-base: 1rem;
-  --text-md:   1.125rem;
-  --text-lg:   1.375rem;
-  --text-xl:   1.75rem;
-  --text-2xl:  2.25rem;
-  --text-3xl:  3rem;
-  --text-4xl:  4rem;
 
   --font-weight-light:    300;
   --font-weight-normal:   400;
@@ -42,78 +32,67 @@
 
   --duration-fast:  150ms;
   --duration-base:  220ms;
-  --duration-theme: 320ms;
+  --duration-theme: 300ms;
   --ease-standard:  cubic-bezier(0.4, 0, 0.2, 1);
-
-  --sidebar-width:  256px;
-  --topbar-height:  64px;
 }
 
-/* ─── 2. RAW PALETTE ────────────────────────────────── */
+/* ─── 2. RAW PALETTE + DYNAMIC SCALE ────────────────── */
 :root {
-  --q-purple-deeper: #251D9A;
-  --q-purple-dark:   #3B30C0;
-  --q-purple:        #5B4FF0;
-  --q-purple-mid:    #9B91F5;
-  --q-purple-light:  #EAE8FD;
+  /* Gray scale → LIGHT mode (cream → navy) */
+  --g-50:  #070D28;   --g-100: #0C1438;
+  --g-200: #132050;   --g-300: #1E3080;
+  --g-400: #2547CC;   --g-500: #4A67B4;
+  --g-600: #8899BB;   --g-700: #C8C0A8;
+  --g-750: #D8D0B8;   --g-800: #EDE5CC;
+  --g-900: #FDFAF5;   --g-950: #F5EFE0;
 
-  --q-lime-dark:  #9AB82A;
-  --q-lime:       #C2E53A;
-  --q-lime-light: #D9EE79;
-  --q-lime-pale:  #EEF6CC;
+  /* Amber → Corpus brand — LIGHT mode (royal blue) */
+  --a-300: #4060A0;   --a-400: #1E3080;   --a-500: #2547CC;
 
-  --q-white:       #FFFFFF;
-  --q-gray-soft:   #F4F4F2;
-  --q-gray-light:  #C8C8C8;
-  --q-gray:        #888888;
-  --q-gray-dark:   #444444;
-  --q-black:       #0D0D0D;
-  --q-black-soft:  #1A1A1A;
-  --q-black-deep:  #0A0A12;
-  --q-surface-dark:#15151F;
+  /* White text → dark navy in light mode */
+  --color-white: #0C1438;
 
-  --q-success: #22C55E;
-  --q-warning: #F59E0B;
-  --q-danger:  #EF4444;
-  --q-info:    #3B82F6;
+  /* Named */
+  --c-navy-600: #2547CC;
+  --c-blue:     #2F6BFF;
+  --c-cream:    #EDE5CC;
 }
 
-/* ─── 3. SEMANTIC TOKENS — LIGHT ───────────────────── */
+/* ─── 3a. SEMANTIC TOKENS — LIGHT (crema + naval) ─── */
 :root {
-  --bg-page:     #F6F5FF;
-  --bg-surface:  var(--q-white);
-  --bg-subtle:   var(--q-gray-soft);
-  --bg-elevated: var(--q-white);
-  --bg-inverse:  var(--q-black);
+  --bg-page:     #F5EFE0;
+  --bg-surface:  #FFFFFF;
+  --bg-subtle:   #EDE5CC;
+  --bg-elevated: #FFFFFF;
+  --bg-inverse:  #070D28;
 
-  --text-primary:    var(--q-black);
-  --text-secondary:  var(--q-gray-dark);
-  --text-muted:      var(--q-gray);
-  --text-faint:      var(--q-gray-light);
-  --text-on-brand:   var(--q-white);
-  --text-on-accent:  var(--q-black);
-  --text-on-inverse: var(--q-white);
+  --text-primary:    #070D28;
+  --text-secondary:  #1E3080;
+  --text-muted:      #2547CC;
+  --text-faint:      #7090D8;
+  --text-on-brand:   #FFFFFF;
+  --text-on-accent:  #FFFFFF;
+  --text-on-inverse: #FFFFFF;
 
-  --border-subtle:  rgba(91, 79, 240, 0.08);
-  --border-default: rgba(91, 79, 240, 0.20);
-  --border-strong:  var(--q-purple);
+  --border-subtle:  rgba(37, 71, 204, 0.10);
+  --border-default: rgba(37, 71, 204, 0.22);
+  --border-strong:  #2547CC;
 
-  --brand-primary:        var(--q-purple);
-  --brand-primary-hover:  var(--q-purple-dark);
-  --brand-primary-active: var(--q-purple-deeper);
-  --brand-primary-soft:   var(--q-purple-light);
+  --brand-primary:        #2547CC;
+  --brand-primary-hover:  #1E3080;
+  --brand-primary-active: #070D28;
+  --brand-primary-soft:   rgba(37, 71, 204, 0.10);
 
-  --brand-accent:        var(--q-lime);
-  --brand-accent-hover:  var(--q-lime-dark);
-  --brand-accent-soft:   var(--q-lime-pale);
+  --brand-accent:        #2F6BFF;
+  --brand-accent-hover:  #4D88FF;
+  --brand-accent-soft:   rgba(47, 107, 255, 0.12);
 
-  --focus-ring: rgba(91, 79, 240, 0.25);
+  --focus-ring: rgba(37, 71, 204, 0.28);
 
-  --shadow-sm:     0 1px 2px rgba(13,13,13,0.06);
-  --shadow-md:     0 4px 12px rgba(13,13,13,0.10);
-  --shadow-lg:     0 12px 32px rgba(13,13,13,0.14);
-  --shadow-brand:  0 8px 24px rgba(91,79,240,0.28);
-  --shadow-accent: 0 8px 24px rgba(194,229,58,0.32);
+  --shadow-sm:    0 1px 3px rgba(7, 13, 40, 0.08);
+  --shadow-md:    0 4px 12px rgba(7, 13, 40, 0.14);
+  --shadow-lg:    0 12px 32px rgba(7, 13, 40, 0.20);
+  --shadow-brand: 0 8px 24px rgba(37, 71, 204, 0.30);
 
   --success-fg: #15803D; --success-bg: #DCFCE7; --success-border: #86EFAC;
   --warning-fg: #B45309; --warning-bg: #FEF3C7; --warning-border: #FCD34D;
@@ -121,42 +100,59 @@
   --info-fg:    #1D4ED8; --info-bg:    #DBEAFE; --info-border:    #93C5FD;
 }
 
-/* ─── 3b. SEMANTIC TOKENS — DARK ─── ⚡ LIME IS PRIMARY */
+/* ─── 3b. SEMANTIC TOKENS — DARK (deep navy) ────── */
 .dark {
-  --bg-page:     var(--q-black-deep);
-  --bg-surface:  var(--q-surface-dark);
-  --bg-subtle:   #1A1A24;
-  --bg-elevated: #1F1F2C;
-  --bg-inverse:  var(--q-white);
+  /* Gray scale → DARK mode (navy → cream) */
+  --g-950: #070D28;   --g-900: #0C1438;
+  --g-800: #132050;   --g-750: #182868;
+  --g-700: #1E3080;   --g-600: #2B42A8;
+  --g-500: #4060C0;   --g-400: #7090D8;
+  --g-300: #A0B8F0;   --g-200: #C8D8F8;
+  --g-100: #E4ECFD;   --g-50:  #F2F6FF;
 
-  --text-primary:    var(--q-gray-soft);
-  --text-secondary:  var(--q-gray-light);
-  --text-muted:      var(--q-gray);
-  --text-faint:      #555555;
-  --text-on-brand:   var(--q-black);
-  --text-on-accent:  var(--q-white);
-  --text-on-inverse: var(--q-black);
+  /* Amber → Corpus brand — DARK mode (azure) */
+  --a-300: #96B4FF;   --a-400: #6090FF;   --a-500: #2F6BFF;
 
-  --border-subtle:  rgba(255,255,255,0.06);
-  --border-default: rgba(194,229,58,0.18);
-  --border-strong:  var(--q-lime);
+  /* White text → stays white in dark mode */
+  --color-white: #FFFFFF;
 
-  --brand-primary:        var(--q-lime);
-  --brand-primary-hover:  var(--q-lime-light);
-  --brand-primary-active: var(--q-lime-dark);
-  --brand-primary-soft:   rgba(194,229,58,0.12);
+  /* Named */
+  --c-navy-600: #2547CC;
+  --c-blue:     #2F6BFF;
+  --c-cream:    #EDE5CC;
+  --bg-page:     #070D28;
+  --bg-surface:  #0C1438;
+  --bg-subtle:   #132050;
+  --bg-elevated: #182868;
+  --bg-inverse:  #FFFFFF;
 
-  --brand-accent:        var(--q-purple-mid);
-  --brand-accent-hover:  var(--q-purple);
-  --brand-accent-soft:   rgba(155,145,245,0.15);
+  --text-primary:    #EDF0FF;
+  --text-secondary:  #A0B8F0;
+  --text-muted:      #7090D8;
+  --text-faint:      #3A52A0;
+  --text-on-brand:   #FFFFFF;
+  --text-on-accent:  #FFFFFF;
+  --text-on-inverse: #070D28;
 
-  --focus-ring: rgba(194,229,58,0.35);
+  --border-subtle:  rgba(160, 184, 240, 0.08);
+  --border-default: rgba(47, 107, 255, 0.22);
+  --border-strong:  #2F6BFF;
 
-  --shadow-sm:     0 1px 2px rgba(0,0,0,0.40);
-  --shadow-md:     0 4px 12px rgba(0,0,0,0.50);
-  --shadow-lg:     0 12px 32px rgba(0,0,0,0.60);
-  --shadow-brand:  0 8px 24px rgba(194,229,58,0.20);
-  --shadow-accent: 0 8px 24px rgba(155,145,245,0.25);
+  --brand-primary:        #2F6BFF;
+  --brand-primary-hover:  #6090FF;
+  --brand-primary-active: #4D88FF;
+  --brand-primary-soft:   rgba(47, 107, 255, 0.15);
+
+  --brand-accent:        #6090FF;
+  --brand-accent-hover:  #2F6BFF;
+  --brand-accent-soft:   rgba(96, 144, 255, 0.15);
+
+  --focus-ring: rgba(47, 107, 255, 0.38);
+
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.50);
+  --shadow-md:    0 4px 12px rgba(0, 0, 0, 0.60);
+  --shadow-lg:    0 12px 32px rgba(0, 0, 0, 0.70);
+  --shadow-brand: 0 8px 24px rgba(47, 107, 255, 0.28);
 
   --success-fg: #86EFAC; --success-bg: rgba(34,197,94,0.12);  --success-border: rgba(34,197,94,0.30);
   --warning-fg: #FCD34D; --warning-bg: rgba(245,158,11,0.12); --warning-border: rgba(245,158,11,0.30);
@@ -164,32 +160,36 @@
   --info-fg:    #93C5FD; --info-bg:    rgba(59,130,246,0.12); --info-border:    rgba(59,130,246,0.30);
 }
 
-/* ─── 4. TAILWIND BRIDGE ────────────────────────────── */
+/* ─── 4. TAILWIND BRIDGE (dynamic via CSS vars) ─────── */
 @theme inline {
+  /* Gray scale — responde a .dark toggle */
+  --color-gray-50:  var(--g-50);
+  --color-gray-100: var(--g-100);
+  --color-gray-200: var(--g-200);
+  --color-gray-300: var(--g-300);
+  --color-gray-400: var(--g-400);
+  --color-gray-500: var(--g-500);
+  --color-gray-600: var(--g-600);
+  --color-gray-700: var(--g-700);
+  --color-gray-750: var(--g-750);
+  --color-gray-800: var(--g-800);
+  --color-gray-900: var(--g-900);
+  --color-gray-950: var(--g-950);
+
+  /* Amber → Corpus brand — responde a .dark toggle */
+  --color-amber-300: var(--a-300);
+  --color-amber-400: var(--a-400);
+  --color-amber-500: var(--a-500);
+
+  /* White — oscuro en light, blanco en dark */
+  --color-white: var(--color-white);
+
+  /* Semantic tokens */
   --color-surface:       var(--bg-surface);
   --color-page:          var(--bg-page);
-  --color-subtle:        var(--bg-subtle);
-  --color-elevated:      var(--bg-elevated);
-  --color-inverse-bg:    var(--bg-inverse);
-
-  --color-primary:       var(--text-primary);
-  --color-secondary:     var(--text-secondary);
-  --color-muted:         var(--text-muted);
-  --color-faint:         var(--text-faint);
-  --color-on-brand:      var(--text-on-brand);
-  --color-on-accent:     var(--text-on-accent);
-  --color-on-inverse:    var(--text-on-inverse);
-
-  --color-stroke:        var(--border-default);
-  --color-stroke-subtle: var(--border-subtle);
-  --color-stroke-strong: var(--border-strong);
-
   --color-brand:         var(--brand-primary);
-  --color-brand-hover:   var(--brand-primary-hover);
   --color-brand-soft:    var(--brand-primary-soft);
   --color-accent:        var(--brand-accent);
-  --color-accent-hover:  var(--brand-accent-hover);
-  --color-accent-soft:   var(--brand-accent-soft);
 
   --color-success-fg:    var(--success-fg);
   --color-success-bg:    var(--success-bg);
@@ -199,12 +199,6 @@
   --color-danger-bg:     var(--danger-bg);
   --color-info-fg:       var(--info-fg);
   --color-info-bg:       var(--info-bg);
-
-  --color-q-purple:      #5B4FF0;
-  --color-q-purple-mid:  #9B91F5;
-  --color-q-lime:        #C2E53A;
-  --color-q-black:       #0D0D0D;
-  --color-q-white:       #FFFFFF;
 }
 
 /* ─── 5. BASE STYLES ────────────────────────────────── */
@@ -216,17 +210,16 @@
                 color var(--duration-theme) var(--ease-standard);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
   }
   body {
-    font-family: var(--font-sans);
+    font-family: "Rubik", sans-serif;
     font-size: 1rem;
     line-height: 1.6;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    font-weight: 800;
-    line-height: 1.15;
+    font-family: "Rubik", sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
   }
   :focus-visible {
     outline: 2px solid var(--brand-primary);
@@ -240,39 +233,4 @@
     transition-timing-function: var(--ease-standard);
   }
   button { cursor: pointer; }
-}
-
-/* ─── 6. AG GRID — QUANTIA THEME ───────────────────────── */
-.ag-theme-quartz {
-  --ag-background-color:                 var(--bg-surface);
-  --ag-foreground-color:                 var(--text-primary);
-  --ag-border-color:                     var(--border-subtle);
-  --ag-secondary-border-color:           var(--border-subtle);
-  --ag-row-border-color:                 var(--border-subtle);
-  --ag-header-background-color:          var(--bg-subtle);
-  --ag-header-foreground-color:          var(--text-secondary);
-  --ag-header-column-separator-color:    var(--border-subtle);
-  --ag-odd-row-background-color:         transparent;
-  --ag-row-hover-color:                  var(--brand-primary-soft);
-  --ag-selected-row-background-color:    var(--brand-primary-soft);
-  --ag-accent-color:                     var(--brand-primary);
-  --ag-input-focus-border-color:         var(--brand-primary);
-  --ag-input-focus-box-shadow:           0 0 0 3px var(--focus-ring);
-  --ag-checkbox-checked-color:           var(--brand-primary);
-  --ag-range-selection-border-color:     var(--brand-primary);
-  --ag-range-selection-background-color: var(--brand-primary-soft);
-  --ag-popup-shadow:                     var(--shadow-lg);
-  --ag-font-family:                      'Nunito Sans', sans-serif;
-  --ag-font-size:                        13px;
-  --ag-border-radius:                    8px;
-  --ag-wrapper-border-radius:            16px;
-  --ag-row-height:                       56px;
-  --ag-header-height:                    44px;
-  --ag-cell-horizontal-padding:          14px;
-  --ag-grid-size:                        6px;
-  --ag-icon-size:                        14px;
-  --ag-list-item-height:                 30px;
-  --ag-panel-background-color:           var(--bg-elevated);
-  --ag-tool-panel-background-color:      var(--bg-surface);
-  --ag-menu-background-color:            var(--bg-elevated);
 }
