@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/client';
 import { clearSession, getSession } from '@/store/auth';
+import { getFechaEvento } from '@/store/evento';
+import { getImpresora } from '@/store/impresora';
 import { getTheme, toggleTheme } from '@/store/theme';
 import { Trash2, X, Settings, LayoutDashboard, LogOut, Package, ClipboardList, Sun, Moon } from 'lucide-react';
 
@@ -76,11 +78,15 @@ export default function TpvPage() {
     if (!session || carrito.length === 0) return;
     setLoadingCobro(true);
     try {
+      const impresora = getImpresora();
+      const fechaEvento = getFechaEvento();
       const res = await api.post<{ id: number; tickets: TicketFisico[] }>('/ventas', {
         metodoPago: metodo,
         taquilla: session.taquilla,
         lineas: carrito.map(l => ({ productoId: l.productoId, cantidad: l.cantidad })),
         ...(metodo === 'EFECTIVO' && efectivo ? { efectivoEntregado: Number(efectivo) } : {}),
+        ...(impresora ? { impresoraIp: impresora.ip } : {}),
+        ...(fechaEvento ? { fechaEvento } : {}),
       });
       setVentaOk(res);
       setCarrito([]);
@@ -99,7 +105,7 @@ export default function TpvPage() {
       {/* NavBar */}
       <nav className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-800 shrink-0">
         <div className="flex items-center gap-3">
-          <span className="font-bold text-amber-400 text-lg">TPV Corpus</span>
+          <span className="font-bold text-amber-400 text-lg">TPV Patio Nazarí</span>
           <span className="text-gray-500 text-sm">· Taquilla {session?.taquilla} · {session?.nombre}</span>
         </div>
         <div className="flex items-center gap-1">

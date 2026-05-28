@@ -56,7 +56,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center gap-8 p-6 select-none">
-      <h1 className="text-3xl font-bold text-white tracking-wide">TPV Corpus</h1>
+      <h1 className="text-3xl font-bold text-white tracking-wide">TPV Patio Nazarí</h1>
 
       {!selected ? (
         <div className="w-full max-w-xl flex flex-col gap-6">

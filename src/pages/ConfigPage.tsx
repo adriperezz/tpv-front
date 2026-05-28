@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getImpresora, saveImpresora, clearImpresora } from '@/store/impresora';
-import { ArrowLeft, Printer, Trash2 } from 'lucide-react';
+import { getFechaEvento, saveFechaEvento } from '@/store/evento';
+import { ArrowLeft, Printer, Trash2, Calendar } from 'lucide-react';
 
 const IMPRESORAS_PRESET = [
   { nombre: 'Impresora 1', ip: '192.168.1.101' },
@@ -14,6 +15,14 @@ export default function ConfigPage() {
   const [ip, setIp] = useState(actual?.ip ?? '');
   const [nombre, setNombre] = useState(actual?.nombre ?? '');
   const [guardado, setGuardado] = useState(false);
+  const [fecha, setFecha] = useState(getFechaEvento());
+  const [fechaGuardada, setFechaGuardada] = useState(false);
+
+  function guardarFecha() {
+    saveFechaEvento(fecha);
+    setFechaGuardada(true);
+    setTimeout(() => setFechaGuardada(false), 2000);
+  }
 
   function guardar() {
     if (!ip) return;
@@ -91,10 +100,33 @@ export default function ConfigPage() {
               placeholder="192.168.1.100"
               className="bg-gray-800 rounded-xl px-4 py-3 text-sm font-mono outline-none focus:ring-2 focus:ring-amber-500" />
             <button onClick={guardar} disabled={!ip}
-              className="py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold disabled:opacity-30 transition-all">
+              className="py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-bold disabled:opacity-30 transition-all">
               {guardado ? '✓ Guardado' : 'Guardar'}
             </button>
           </div>
+        </div>
+
+        {/* Fecha del evento para tickets */}
+        <div className="bg-gray-900 rounded-2xl p-5 mt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar size={16} className="text-amber-400" />
+            <p className="text-sm font-semibold">Fecha en el ticket impreso</p>
+          </div>
+          <input
+            value={fecha}
+            onChange={e => setFecha(e.target.value)}
+            placeholder="Ej: Viernes 6 Junio 2026"
+            className="w-full bg-gray-800 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-500 mb-3"
+          />
+          {fecha && (
+            <p className="text-xs text-gray-500 mb-3">
+              Vista previa: <span className="text-white font-semibold">{fecha}</span>
+            </p>
+          )}
+          <button onClick={guardarFecha}
+            className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-bold transition-all">
+            {fechaGuardada ? '✓ Guardado' : 'Guardar fecha'}
+          </button>
         </div>
 
         <p className="text-xs text-gray-600 text-center mt-4">

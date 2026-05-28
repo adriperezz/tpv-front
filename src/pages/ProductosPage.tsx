@@ -87,7 +87,7 @@ export default function ProductosPage() {
             <h1 className="text-2xl font-bold">Productos</h1>
           </div>
           <button onClick={abrirCrear}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold text-sm transition-all">
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm transition-all">
             <Plus size={16} /> Nuevo
           </button>
         </div>
@@ -153,7 +153,7 @@ export default function ProductosPage() {
               </div>
 
               <button onClick={guardar} disabled={!form.nombre || !form.precio || saving}
-                className="py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold disabled:opacity-30 transition-all">
+                className="py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-bold disabled:opacity-30 transition-all">
                 {saving ? 'Guardando…' : 'Guardar'}
               </button>
             </div>
